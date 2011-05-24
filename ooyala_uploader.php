@@ -197,9 +197,9 @@ class Ooyala {
 
 
 //set default things like root label and channel that is client specific here
-$needsThumbnail = 'false'; //true or false if using thumbnail uploads
-$needsStartDate = 'false'; //true or false if using start date
-$needsEndDate = 'false'; //true or false if using end date
+$needsThumbnail = 'true'; //true or false if using thumbnail uploads
+$needsStartDate = 'true'; //true or false if using start date
+$needsEndDate = 'true'; //true or false if using end date
 
 $rootLabel = '/Development/';//everything up to the last label e.g. /SuperPages/
 
@@ -213,7 +213,7 @@ $description = Ooyala::word_character_remover($_POST['description']);
 
 $title = Ooyala::word_character_remover($_POST['title']);
 
-//$metaDataNeeded = "'feed:media:keywords' => $_POST['keywords']";
+//$metaDataNeeded = array('feed:media:keywords' => $_POST['keywords']);
 
 $startDate = $_POST['startDate'].'T[00]:[00]:[00]Z';
 
@@ -317,6 +317,9 @@ if($channel != 'none'){
 	<head>
 		<meta charset="utf-8">
 		<title>Ooyala Uploader</title>
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 		<link rel="stylesheet" type="text/css" href="style.css" />
 	</head>
 	<body>
