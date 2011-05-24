@@ -2,6 +2,24 @@ Ooyala Uploader
 ========
 Created By: [Travis Berry][1]
 
+USAGE:
+======
+
+Insert your api keys on lines 157 & 158
+	$ooyala_pcode = 'PARTNER CODE HERE';
+	$ooyala_scode = 'SECRET CODE HERE';
+
+Set your config options around lines 200
+
+Make sure the front end for elements match the $_POST variables in the backend
+
+Change or add any metadata as needed
+
+?????
+
+Profit
+
+
 Todo:
 ======================== 
 
