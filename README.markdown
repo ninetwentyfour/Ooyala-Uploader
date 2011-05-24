@@ -6,6 +6,7 @@ USAGE:
 ======
 
 Insert your api keys on lines 157 & 158
+
 	$ooyala_pcode = 'PARTNER CODE HERE';
 	$ooyala_scode = 'SECRET CODE HERE';
 
