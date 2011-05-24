@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Ooyala Uploader</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+	</head>
+	<body>
+		<div id="LoadingDiv" style="visibility:hidden;">
+			<center>
+				<img src="img/9-1.gif" alt="" />
+			</center>
+		</div>
+		<div id="main">
+			<header id="header">
+				<h1><a href="ooyala_uploader.html">Ooyala Uploader</a></h1>
+			</header>
+			<section id="form">
+				<form id="form2" action="ooyala_uploader.php" method="post" enctype="multipart/form-data">
+					<label for="video_file">Select A Video: </label>
+						<input type="file" id="video_file" value="" name="video_file" /><br />
+					<hr />
+					<label for="label">Label</label>
+						<input class="required validate-number" type="text" id="label" name="label" required /><br />
+					<hr />
+					<label for="label">Start Date YYYY-MM-DD</label>
+						<input type="text" id="startDate" name="startDate" pattern="^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$" required /><br />
+					<label for="label">End Date YYYY-MM-DD</label>
+						<input type="text" id="endDate" name="endDate" pattern="^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$" /><br />
+					<hr />
+					<label for="label">Title</label>
+						<input type="text" id="title" name="title" required /><br />
+					<label for="label">KeyWords</label>
+						<input type="text" id="keywords" name="keywords" required /><br />
+					<label for="label">Description</label>
+						<textarea id="desc1" name="desc1" required ></textarea><br />
+					<hr />
+					<label for="label">Meta Data 1 (Email Address)</label>
+						<input type="email" id="email" name="email" required /><br />
+					<label for="label">Meta Data 2 (Web Link)</label>
+						<input type="url" id="link" name="link" required /><br />
+					<hr />
+					<label for="video_file">Select A Thumbnail: </label> 
+						<input type="file" id="thumbnail" value="" name="thumbnail" /><br />
+					<hr />
+					<input type="submit" name="uploadMedia" value="Upload" class="vista green" onclick="show('LoadingDiv');" />
+				</form>
+			</section>
+		</div>
+		<script language="javascript">
+			function show(showHideDiv) {
+				document.getElementById(showHideDiv).style.visibility = "visible";
+			} 
+		</script>
+	</body>
+</html>

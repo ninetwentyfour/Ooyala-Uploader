@@ -215,6 +215,9 @@ $title = Ooyala::word_character_remover('test');
 
 $metaDataNeeded = array('key'=>'value');
 
+$startDate = '[YYYY]-[MM]-[DD]T[HH]:[MM]:[SS]Z';
+
+$endDate = '[YYYY]-[MM]-[DD]T[HH]:[MM]:[SS]Z';
 
 // VIDEO UPLOAD START
 //check to see if there is already a video associated to the label we are trying to upload to
@@ -260,14 +263,14 @@ if($add_meta != 'pass'){
 
 //set start and end dates if needed
 if($needsStartDate == 'true'){
-	$startDate = Ooyala::setStartDate(array('embedCode' => $embedCode));
-	if($startDate != 'pass'){
+	$addStartDate = Ooyala::setStartDate(array('embedCode' => $embedCode, 'flightStart' => $startDate));
+	if($addStartDate != 'pass'){
 		//throw an error problem setting start date
 	}
 }
 if($needsEndDate == 'true'){
-	$endDate = Ooyala::setEndDate(array('embedCode' => $embedCode));
-	if($endDate != 'pass'){
+	$addEndDate = Ooyala::setEndDate(array('embedCode' => $embedCode, 'flightEnd' => $endDate));
+	if($addEndDate != 'pass'){
 		//throw an error problem setting end date
 	}
 }
@@ -287,5 +290,5 @@ if($channel != 'none'){
 		//throw error not assigned to channel
 	}
 }
-
+// VIDEO UPLOAD END
 ?>
