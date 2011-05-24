@@ -1,8 +1,10 @@
 <?php
+//error reporting since my php install is all jacked - turn off for use
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
 ini_set('error_log', dirname(__FILE__) . '/error_log.txt');
 error_reporting(E_ALL);
+
 class Ooyala {
 	function remove_video_query($params,$options = NULL){
 		$options['urlBase'] = 'http://api.ooyala.com/partner/';
@@ -128,15 +130,13 @@ class Ooyala {
 		$uploadTumbnailURL = Ooyala::send_request('upload_complete',$params,$options);
 		$thumbfile = $_FILES['thumbnail']['tmp_name'];
 		$ch = curl_init($uploadTumbnailURL);  
-	    curl_setopt($ch, CURLOPT_POSTFIELDS, array('file'=>"@$thumbfile"));//post the file
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	    $postResult = curl_exec($ch);
-	    curl_close($ch);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, array('file'=>"@$thumbfile"));//post the file
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$postResult = curl_exec($ch);
+		curl_close($ch);
 		if ($postResult != ''){
-			//upload works
 			return 'pass';
 		}else{
-			//upload failed
 			return 'fail';
 		}
 	}
@@ -161,7 +161,6 @@ class Ooyala {
 		if (!array_key_exists('expires', $params)) {
 			$params['expires'] = time() + 900;
 		}
-
 		$string_to_sign = $ooyala_scode;
 		if($options['urlBase'] == 'http://uploader.ooyala.com/api/upload/preview'){
 			$urlBase = $options['urlBase'];
@@ -179,7 +178,6 @@ class Ooyala {
 			$string_to_sign .= $key.'='.$params[$key];
 			$url .= '&'.rawurlencode($key).'='.rawurlencode($params[$key]);
 		}
-
 		$digest = hash('sha256', $string_to_sign, true);
 		$signature = ereg_replace('=+$', '', trim(base64_encode($digest)));
 		$url .= '&signature='.rawurlencode($signature);
