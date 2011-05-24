@@ -30,7 +30,7 @@ class Ooyala {
 		}
 	}
 	
-	function upload($params,$options = NULL){//this passes to the send request function for the first time
+	function upload($params,$options = NULL){
 		$options['urlBase'] = 'http://api.ooyala.com/ingestion/';
 		$uploadUrl = Ooyala::send_request('create_video',$params,$options);
 		$xml = simplexml_load_file($uploadUrl);
@@ -42,17 +42,15 @@ class Ooyala {
 		$postResult = curl_exec($ch);
 		curl_close($ch);
 		if ($postResult != ''){
-			//upload works
 			return $xml->embedCode;
 		}else{
-			//upload failed
 			return 'fail';
 		}
 	}
 
-	function upload_complete($params,$options = NULL){//this gets hit after posting the video to ooyala
+	function upload_complete($params,$options = NULL){
 		$options['urlBase'] = 'http://api.ooyala.com/ingestion/';
-		$completeUrl = Ooyala::send_request('upload_complete', $params,$options);//goes back to send request for the second time
+		$completeUrl = Ooyala::send_request('upload_complete', $params,$options);
 		$ch = curl_init($completeUrl);  
 		$postResult = curl_exec($ch);
 		curl_close($ch);
@@ -63,9 +61,9 @@ class Ooyala {
 		}
 	}
 	
-	function assign_label($params,$options = NULL){//this starts creating and assigning labels
+	function assign_label($params,$options = NULL){
 		$options['urlBase'] = 'http://api.ooyala.com/partner/';
-		$addLabelURL = Ooyala::send_request('labels',$params,$options);//this kicks off send request 2 to assign label
+		$addLabelURL = Ooyala::send_request('labels',$params,$options);
 		$xml = simplexml_load_file($addLabelURL);
 		if($xml == 'ok'){
 			return 'pass';
@@ -154,6 +152,7 @@ class Ooyala {
 		}
 	}
 	
+	//generate the signatures and format the request url
 	private static function send_request($request_type, $params, $options){
 		$ooyala_pcode = 'FqY2o6IaPQg4mSYPUApYy0LgwE_p';
 		$ooyala_scode = 't8u-Ed-aDLlVecI2C4wDfhqPbbcXXDwZa2sAJtsw';
@@ -162,18 +161,14 @@ class Ooyala {
 			$params['expires'] = time() + 900;
 		}
 		$string_to_sign = $ooyala_scode;
-		if($options['urlBase'] == 'http://uploader.ooyala.com/api/upload/preview'){
+		if($options['urlBase'] == 'http://uploader.ooyala.com/api/upload/preview' || $options['urlBase'] == 'http://uploader.ooyala.com/api/upload/preview'){
 			$urlBase = $options['urlBase'];
 		}else{
 			$urlBase = $options['urlBase'].$request_type;
 		}
-		if($options['urlBase'] == 'http://uploader.ooyala.com/api/upload/preview'){
-			$urlBase = $options['urlBase'];
-		}
 		$url = $urlBase.'?pcode='.$ooyala_pcode;
 		$keys = array_keys($params);
 		sort($keys);
-
 		foreach ($keys as $key) {
 			$string_to_sign .= $key.'='.$params[$key];
 			$url .= '&'.rawurlencode($key).'='.rawurlencode($params[$key]);
@@ -184,6 +179,7 @@ class Ooyala {
 		return $url;
 	}
 	
+	//get rid of any word characters that may have been pasted into the upload form
 	private static function word_character_remover($string){
 		// First, replace UTF-8 characters.
 		$string = str_replace(
@@ -209,7 +205,6 @@ $rootLabel = '/';//everything up to the last label e.g. /SuperPages/
 
 $channel = 'none'; // set to none if no need to assign video to a channel or use channel embed code
 
-$metaDataNeeded = array('key'=>'value');
 
 //get all posted data
 $topLabel = '1111111113';
@@ -218,15 +213,17 @@ $description = Ooyala::word_character_remover('test');
 
 $title = Ooyala::word_character_remover('test');
 
-//find video is exists
+$metaDataNeeded = array('key'=>'value');
+
+
+// VIDEO UPLOAD START
+//check to see if there is already a video associated to the label we are trying to upload to
 $removeOldVideoQuery = Ooyala::remove_video_query(array('label[0]' =>$rootLabel.$topLabel, 'limit' => 1, 'fields' => 'labels'));
 // delete video if there was one
 if($removeOldVideoQuery != 'none found'){
-	$removeOldVideo = Ooyala::remove_video(array('embedCode' => $removeOldVideoQuery, 'status' => 'paused'));
-	if($removeOldVideo == 'pass'){
-		//everything is fine
-	}else{
-		//throw an error or something here
+	$removeOldVideo = Ooyala::remove_video(array('embedCode' => $removeOldVideoQuery, 'status' => 'deleted')); //use paused for testing if you dont want to delete videos
+	if($removeOldVideo != 'pass'){
+		//throw error since old video wasnt deleted
 	}
 }
 
@@ -234,9 +231,10 @@ if($removeOldVideoQuery != 'none found'){
 $upload = Ooyala::upload(array('file_size' => $_FILES['video_file']['size'], 'file_name' => $_FILES['video_file']['name'], 'title' => $_FILES['video_file']['name']));
 if($upload != 'fail'){
 	$embedCode = $upload;
+	//using the api - videos require a second call to make the start processing
 	$upload_complete = Ooyala::upload_complete(array('embed_code' => $embedCode));
 	if($upload_complete == 'fail'){
-		//throw an error since video wasnt completed
+		//throw an error since video wasnt completed and wont process
 	}
 }else{
 	//throw an error since video was not posted
@@ -251,7 +249,7 @@ if($add_label != 'pass'){
 //add title and description
 $add_title = Ooyala::add_title(array('embedCode' => $embedCode, 'description' => $description, 'title' => $title));
 if($add_title != 'pass'){
-	//throw an error no metadata
+	//throw an error no title or description
 }
 
 // add meta data
@@ -263,16 +261,22 @@ if($add_meta != 'pass'){
 //set start and end dates if needed
 if($needsStartDate == 'true'){
 	$startDate = Ooyala::setStartDate(array('embedCode' => $embedCode));
+	if($startDate != 'pass'){
+		//throw an error problem setting start date
+	}
 }
 if($needsEndDate == 'true'){
 	$endDate = Ooyala::setEndDate(array('embedCode' => $embedCode));
+	if($endDate != 'pass'){
+		//throw an error problem setting end date
+	}
 }
 
 // add thumbnail if needed
 if($needsThumbnail == 'true'){
 	$upload_thumbnail = Ooyala::uploadThumbnail(array('embed_code' => $embedCode));
 	if($upload_thumbnail != 'pass'){
-		//throw error
+		//throw error no thumbnail uploaded
 	}
 }
 
@@ -280,7 +284,7 @@ if($needsThumbnail == 'true'){
 if($channel != 'none'){
 	$addToChannel = Ooyala::addToChannel(array('channelSetEmbedCode' => $channel, 'channelEmbedCodes' => $embedCode , 'mode' => 'assign'));
 	if($addToChannel != 'pass'){
-		//throw error
+		//throw error not assigned to channel
 	}
 }
 
