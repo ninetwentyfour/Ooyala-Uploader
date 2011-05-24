@@ -201,23 +201,23 @@ $needsThumbnail = 'false'; //true or false if using thumbnail uploads
 $needsStartDate = 'false'; //true or false if using start date
 $needsEndDate = 'false'; //true or false if using end date
 
-$rootLabel = '/';//everything up to the last label e.g. /SuperPages/
+$rootLabel = '/Development/';//everything up to the last label e.g. /SuperPages/
 
 $channel = 'none'; // set to none if no need to assign video to a channel or use channel embed code
 
 
 //get all posted data
-$topLabel = '1111111113';
+$topLabel = $_POST['label'];
 
-$description = Ooyala::word_character_remover('test');
+$description = Ooyala::word_character_remover($_POST['title']);
 
-$title = Ooyala::word_character_remover('test');
+$title = Ooyala::word_character_remover($_POST['description']);
 
-$metaDataNeeded = array('key'=>'value');
+$metaDataNeeded = array('feed:media:keywords' => $_POST['keywords']);
 
-$startDate = '[YYYY]-[MM]-[DD]T[HH]:[MM]:[SS]Z';
+$startDate = $_POST['startDate'].'T[00]:[00]:[00]Z';
 
-$endDate = '[YYYY]-[MM]-[DD]T[HH]:[MM]:[SS]Z';
+$endDate = $_POST['endDate'].'T[00]:[00]:[00]Z';
 
 // VIDEO UPLOAD START
 //check to see if there is already a video associated to the label we are trying to upload to
