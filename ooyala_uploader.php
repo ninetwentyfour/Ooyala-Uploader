@@ -154,8 +154,8 @@ class Ooyala {
 	
 	//generate the signatures and format the request url
 	private static function send_request($request_type, $params, $options){
-		$ooyala_pcode = 'FqY2o6IaPQg4mSYPUApYy0LgwE_p';
-		$ooyala_scode = 't8u-Ed-aDLlVecI2C4wDfhqPbbcXXDwZa2sAJtsw';
+		$ooyala_pcode = 'PARTNER CODE HERE';
+		$ooyala_scode = 'SECRET CODE HERE';
 		// Add an expire time of 15 minutes unless otherwise specified
 		if (!array_key_exists('expires', $params)) {
 			$params['expires'] = time() + 900;
@@ -203,7 +203,7 @@ $needsEndDate = 'true'; //true or false if using end date
 
 $rootLabel = '/Development/';//everything up to the last label e.g. /SuperPages/
 
-$channel = 'ZycHhnMjqV_b7lcM3fdQ1UVF4BoNz-dE'; // set to none if no need to assign video to a channel or use channel embed code
+$channel = 'none'; // set to none if no need to assign video to a channel or use channel embed code
 
 
 //get all posted data
