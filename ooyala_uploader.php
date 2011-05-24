@@ -74,8 +74,8 @@ class Ooyala {
 	
 	function add_title($params,$options = NULL){
 		$options['urlBase'] = 'http://api.ooyala.com/partner/';
-		$startDateURL = Ooyala::send_request('edit',$params,$options);
-		$ch = curl_init($startDateURL);
+		$add_titleURL = Ooyala::send_request('edit',$params,$options);
+		$ch = curl_init($add_titleURL);
 		$postResult = curl_exec($ch);
 		curl_close($ch);
 		if($postResult == 'ok'){
@@ -180,7 +180,7 @@ class Ooyala {
 	}
 	
 	//get rid of any word characters that may have been pasted into the upload form
-	private static function word_character_remover($string){
+	function word_character_remover($string){
 		// First, replace UTF-8 characters.
 		$string = str_replace(
 			array("\xe2\x80\x98", "\xe2\x80\x99", "\xe2\x80\x9c", "\xe2\x80\x9d", "\xe2\x80\x93", "\xe2\x80\x94", "\xe2\x80\xa6"),
@@ -209,11 +209,11 @@ $channel = 'none'; // set to none if no need to assign video to a channel or use
 //get all posted data
 $topLabel = $_POST['label'];
 
-$description = Ooyala::word_character_remover($_POST['title']);
+$description = Ooyala::word_character_remover($_POST['description']);
 
-$title = Ooyala::word_character_remover($_POST['description']);
+$title = Ooyala::word_character_remover($_POST['title']);
 
-$metaDataNeeded = array('feed:media:keywords' => $_POST['keywords']);
+//$metaDataNeeded = "'feed:media:keywords' => $_POST['keywords']";
 
 $startDate = $_POST['startDate'].'T[00]:[00]:[00]Z';
 
@@ -228,7 +228,7 @@ if($removeOldVideoQuery != 'none found'){
 	if($removeOldVideo != 'pass'){
 		//throw error since old video wasnt deleted
 		$error = 'There was a problem deleting the old video. Try again.';
-		return $error;
+		echo $error;
 	}
 }
 
@@ -241,12 +241,12 @@ if($upload != 'fail'){
 	if($upload_complete == 'fail'){
 		//throw an error since video wasnt completed and wont process
 		$error = 'Problem Uploading. The video wont process.';
-		return $error;
+		echo $error;
 	}
 }else{
 	//throw an error since video was not posted
 	$error = 'Problem Uploading. The video was not uploaded.';
-	return $error;
+	echo $error;
 }
 
 // add the new label
@@ -254,7 +254,7 @@ $add_label = Ooyala::assign_label(array('embedCodes' => $embedCode, 'labels' => 
 if($add_label != 'pass'){
 	//throw error no labels
 	$error = 'Problem adding Labels. Try Again.';
-	return $error;
+	echo $error;
 }
 
 //add title and description
@@ -262,15 +262,15 @@ $add_title = Ooyala::add_title(array('embedCode' => $embedCode, 'description' =>
 if($add_title != 'pass'){
 	//throw an error no title or description
 	$error = 'Problem adding Title or Description. Try Again.';
-	return $error;
+	echo $error;
 }
 
 // add meta data
-$add_meta = Ooyala::add_meta_data(array('embedCode' => $embedCode, $metaDataNeeded));
+$add_meta = Ooyala::add_meta_data(array('embedCode' => $embedCode, 'feed:media:keywords' => $_POST['keywords']));
 if($add_meta != 'pass'){
 	//throw an error no metadata
 	$error = 'Problem adding MetaData. Try Again.';
-	return $error;
+	echo $error;
 }
 
 //set start and end dates if needed
@@ -279,7 +279,7 @@ if($needsStartDate == 'true'){
 	if($addStartDate != 'pass'){
 		//throw an error problem setting start date
 		$error = 'Problem Setting Start Date. Try Again.';
-		return $error;
+		echo $error;
 	}
 }
 if($needsEndDate == 'true'){
@@ -287,7 +287,7 @@ if($needsEndDate == 'true'){
 	if($addEndDate != 'pass'){
 		//throw an error problem setting end date
 		$error = 'Problem Setting End Date. Try Again.';
-		return $error;
+		echo $error;
 	}
 }
 
@@ -297,7 +297,7 @@ if($needsThumbnail == 'true'){
 	if($upload_thumbnail != 'pass'){
 		//throw error no thumbnail uploaded
 		$error = 'Problem Uploading Thumbnail. Try Again.';
-		return $error;
+		echo $error;
 	}
 }
 
@@ -307,7 +307,7 @@ if($channel != 'none'){
 	if($addToChannel != 'pass'){
 		//throw error not assigned to channel
 		$error = 'Video was not assigned to the Channel. Try Again.';
-		return $error;
+		echo $error;
 	}
 }
 // VIDEO UPLOAD END
