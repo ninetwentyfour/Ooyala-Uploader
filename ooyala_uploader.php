@@ -227,6 +227,8 @@ if($removeOldVideoQuery != 'none found'){
 	$removeOldVideo = Ooyala::remove_video(array('embedCode' => $removeOldVideoQuery, 'status' => 'deleted')); //use paused for testing if you dont want to delete videos
 	if($removeOldVideo != 'pass'){
 		//throw error since old video wasnt deleted
+		$error = 'There was a problem deleting the old video. Try again.';
+		return $error;
 	}
 }
 
@@ -238,27 +240,37 @@ if($upload != 'fail'){
 	$upload_complete = Ooyala::upload_complete(array('embed_code' => $embedCode));
 	if($upload_complete == 'fail'){
 		//throw an error since video wasnt completed and wont process
+		$error = 'Problem Uploading. The video wont process.';
+		return $error;
 	}
 }else{
 	//throw an error since video was not posted
+	$error = 'Problem Uploading. The video was not uploaded.';
+	return $error;
 }
 
 // add the new label
 $add_label = Ooyala::assign_label(array('embedCodes' => $embedCode, 'labels' => $rootLabel.$topLabel, 'mode'=>'assignLabels'));
 if($add_label != 'pass'){
 	//throw error no labels
+	$error = 'Problem adding Labels. Try Again.';
+	return $error;
 }
 
 //add title and description
 $add_title = Ooyala::add_title(array('embedCode' => $embedCode, 'description' => $description, 'title' => $title));
 if($add_title != 'pass'){
 	//throw an error no title or description
+	$error = 'Problem adding Title or Description. Try Again.';
+	return $error;
 }
 
 // add meta data
 $add_meta = Ooyala::add_meta_data(array('embedCode' => $embedCode, $metaDataNeeded));
 if($add_meta != 'pass'){
 	//throw an error no metadata
+	$error = 'Problem adding MetaData. Try Again.';
+	return $error;
 }
 
 //set start and end dates if needed
@@ -266,12 +278,16 @@ if($needsStartDate == 'true'){
 	$addStartDate = Ooyala::setStartDate(array('embedCode' => $embedCode, 'flightStart' => $startDate));
 	if($addStartDate != 'pass'){
 		//throw an error problem setting start date
+		$error = 'Problem Setting Start Date. Try Again.';
+		return $error;
 	}
 }
 if($needsEndDate == 'true'){
 	$addEndDate = Ooyala::setEndDate(array('embedCode' => $embedCode, 'flightEnd' => $endDate));
 	if($addEndDate != 'pass'){
 		//throw an error problem setting end date
+		$error = 'Problem Setting End Date. Try Again.';
+		return $error;
 	}
 }
 
@@ -280,6 +296,8 @@ if($needsThumbnail == 'true'){
 	$upload_thumbnail = Ooyala::uploadThumbnail(array('embed_code' => $embedCode));
 	if($upload_thumbnail != 'pass'){
 		//throw error no thumbnail uploaded
+		$error = 'Problem Uploading Thumbnail. Try Again.';
+		return $error;
 	}
 }
 
@@ -288,7 +306,33 @@ if($channel != 'none'){
 	$addToChannel = Ooyala::addToChannel(array('channelSetEmbedCode' => $channel, 'channelEmbedCodes' => $embedCode , 'mode' => 'assign'));
 	if($addToChannel != 'pass'){
 		//throw error not assigned to channel
+		$error = 'Video was not assigned to the Channel. Try Again.';
+		return $error;
 	}
 }
 // VIDEO UPLOAD END
 ?>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Ooyala Uploader</title>
+		<link rel="stylesheet" type="text/css" href="style.css" />
+	</head>
+	<body>
+		<div id="main">
+			<header id="header">
+				<h1><a href="ooyala_uploader.html">Ooyala Uploader</a></h1>
+			</header>
+			<section id="form">
+				<?php
+					if(isset($error)){
+						echo $error;
+					}else{
+						echo 'Thank You. Your Video Has Been Uploaded.<br />Click <a href="ooyala_uploader.html">Here</a> To Upload Another Video';
+					}
+				?>
+			</section>
+		</div>
+	</body>
+</html>

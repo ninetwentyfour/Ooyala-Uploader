@@ -7,7 +7,7 @@ Todo:
 
 Set start and or end time
 
-Create generic starting uploader interface in HTML
+<del>Create generic starting uploader interface in HTML</del>
 
 Create errors and handle them 
 
