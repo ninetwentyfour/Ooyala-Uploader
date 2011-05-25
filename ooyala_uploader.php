@@ -201,7 +201,7 @@ $needsThumbnail = 'true'; //true or false if using thumbnail uploads
 $needsStartDate = 'true'; //true or false if using start date
 $needsEndDate = 'true'; //true or false if using end date
 
-$rootLabel = '/Development/';//everything up to the last label e.g. /SuperPages/
+$rootLabel = '/Development/';//everything up to the last label e.g. /Production/
 
 $channel = 'none'; // set to none if no need to assign video to a channel or use channel embed code
 
@@ -228,7 +228,7 @@ if($removeOldVideoQuery != 'none found'){
 	if($removeOldVideo != 'pass'){
 		//throw error since old video wasnt deleted
 		$error = 'There was a problem deleting the old video. Try again.';
-		echo $error;
+		return $error;
 	}
 }
 
@@ -241,12 +241,12 @@ if($upload != 'fail'){
 	if($upload_complete == 'fail'){
 		//throw an error since video wasnt completed and wont process
 		$error = 'Problem Uploading. The video wont process.';
-		echo $error;
+		return $error;
 	}
 }else{
 	//throw an error since video was not posted
 	$error = 'Problem Uploading. The video was not uploaded.';
-	echo $error;
+	return $error;
 }
 
 // add the new label
@@ -254,7 +254,7 @@ $add_label = Ooyala::assign_label(array('embedCodes' => $embedCode, 'labels' => 
 if($add_label != 'pass'){
 	//throw error no labels
 	$error = 'Problem adding Labels. Try Again.';
-	echo $error;
+	return $error;
 }
 
 //add title and description
@@ -262,7 +262,7 @@ $add_title = Ooyala::add_title(array('embedCode' => $embedCode, 'description' =>
 if($add_title != 'pass'){
 	//throw an error no title or description
 	$error = 'Problem adding Title or Description. Try Again.';
-	echo $error;
+	return $error;
 }
 
 // add meta data
@@ -270,7 +270,7 @@ $add_meta = Ooyala::add_meta_data(array('embedCode' => $embedCode, 'feed:media:k
 if($add_meta != 'pass'){
 	//throw an error no metadata
 	$error = 'Problem adding MetaData. Try Again.';
-	echo $error;
+	return $error;
 }
 
 //set start and end dates if needed
@@ -279,7 +279,7 @@ if($needsStartDate == 'true'){
 	if($addStartDate != 'pass'){
 		//throw an error problem setting start date
 		$error = 'Problem Setting Start Date. Try Again.';
-		echo $error;
+		return $error;
 	}
 }
 if($needsEndDate == 'true'){
@@ -287,7 +287,7 @@ if($needsEndDate == 'true'){
 	if($addEndDate != 'pass'){
 		//throw an error problem setting end date
 		$error = 'Problem Setting End Date. Try Again.';
-		echo $error;
+		return $error;
 	}
 }
 
@@ -297,7 +297,7 @@ if($needsThumbnail == 'true'){
 	if($upload_thumbnail != 'pass'){
 		//throw error no thumbnail uploaded
 		$error = 'Problem Uploading Thumbnail. Try Again.';
-		echo $error;
+		return $error;
 	}
 }
 
@@ -307,7 +307,7 @@ if($channel != 'none'){
 	if($addToChannel != 'pass'){
 		//throw error not assigned to channel
 		$error = 'Video was not assigned to the Channel. Try Again.';
-		echo $error;
+		return $error;
 	}
 }
 // VIDEO UPLOAD END
